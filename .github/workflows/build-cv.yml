@@ -33,6 +33,10 @@ jobs:
             });
 
             for (const release of releases) {
+              if (!release.tag_name?.startsWith('cv-')) {
+                continue;
+              }
+
               await github.rest.repos.deleteRelease({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
