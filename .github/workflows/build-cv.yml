@@ -21,8 +21,7 @@ jobs:
 
       - name: Set release date
         run: |
-          echo "RELEASE_TAG_DATE=$(date -u +'%Y%m%dT%H%M%SZ')" >> "$GITHUB_ENV"
-          echo "RELEASE_NAME_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
+          echo "RELEASE_DATE=$(date -u +'%Y-%m-%d')" >> "$GITHUB_ENV"
 
       - name: Remove prior releases
         uses: actions/github-script@v7
@@ -36,6 +35,10 @@ jobs:
 
             for (const release of releases) {
               if (!release.tag_name?.startsWith('cv-')) {
+                continue;
+              }
+
+              if (/^cv-\d{4}-\d{2}-\d{2}$/.test(release.tag_name)) {
                 continue;
               }
 
@@ -61,7 +64,7 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: cv-${{ env.RELEASE_TAG_DATE }}
-          name: CV build ${{ env.RELEASE_NAME_DATE }}
+          tag_name: cv-${{ env.RELEASE_DATE }}
+          name: CV build ${{ env.RELEASE_DATE }}
           files: cv.pdf
           generate_release_notes: true
